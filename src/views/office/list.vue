@@ -50,7 +50,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['document:document:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -60,7 +61,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['document:document:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -70,7 +72,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['document:document:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -79,19 +82,25 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['document:document:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="documentList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="文件名称" align="center" >
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="文件名称" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
+          <router-link
+            style="color:#1697ee"
+            :to="{path:`detail/${scope.row.id}`}"
+          >
+            {{ scope.row.title }}
+          </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="发布者" align="center" prop="publisher" />
+      <el-table-column label="发布者" align="center" prop="publisher"/>
       <el-table-column label="创建时间" align="center" prop="publishTime" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
@@ -102,7 +111,7 @@
           <span>{{ scope.row.publishTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="state" >
+      <el-table-column label="状态" align="center" prop="state">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.state===1">已发布</el-tag>
           <el-tag type="warning" v-else>未发布</el-tag>
@@ -115,28 +124,32 @@
             type="text"
             icon="el-icon-top"
             @click="handleOut(scope.row)"
-          >发布</el-button>
+          >发布
+          </el-button>
           <el-button
             v-if="scope.row.state!==0"
             size="mini"
             type="text"
             icon="el-icon-bottom-right"
             @click="handleWithdraw(scope.row)"
-          >撤回</el-button>
+          >撤回
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['document:document:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['document:document:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -148,7 +161,7 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-<!--    发布-->
+    <!--    发布-->
     <el-dialog title="发布" :visible.sync="openout" width="400px" append-to-body>
       <el-form ref="formOut" label-width="80px">
         <el-form-item label="搜索">
@@ -180,10 +193,24 @@
     <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="文件名称" prop="title">
-          <el-input v-model="form.title" placeholder="请输入文件名称" />
+          <el-input v-model="form.title" placeholder="请输入文件名称"/>
         </el-form-item>
         <el-form-item label="文件内容">
           <editor v-model="form.content" :min-height="192"/>
+        </el-form-item>
+        <el-form-item label="附件">
+          <el-upload
+            :key="2"
+            :headers="upload.headers" :action="upload.url + '?updateSupport=' + upload.updateSupport"
+            :disabled="upload.isUploading"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess"
+            multiple
+            :file-list="fileList">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -195,26 +222,51 @@
 </template>
 
 <script>
-  import { withdrawDocument,checkedSchools,outSchools,listDepts,listDocument, getDocument, delDocument, addDocument, updateDocument, exportDocument } from "@/api/office/document";
+  import {
+    deleteFj,
+    withdrawDocument,
+    checkedSchools,
+    outSchools,
+    listDepts,
+    listDocument,
+    getDocument,
+    delDocument,
+    addDocument,
+    updateDocument,
+    exportDocument
+  } from "@/api/office/document";
   import Editor from '@/components/Editor';
+  import {getToken} from "@/utils/auth";
 
   export default {
     name: "list",
-    components: { Editor },
+    components: {Editor},
     data() {
       return {
-        checkedData:[],
+        myInterval: '',
+        upload: {
+          // 是否禁用上传
+          isUploading: false,
+          // 是否更新已经存在的用户数据
+          updateSupport: 0,
+          // 设置上传的请求头部
+          headers: {Authorization: "Bearer " + getToken()},
+          // 上传的地址
+          url: process.env.VUE_APP_BASE_API + "/document/document/upload",
+        },
+        fjData: [],
+        checkedData: [],
         filterText: '',
-        schoolData:[],
+        schoolData: [],
         defaultProps: {
           children: 'children',
           label: 'label'
         },
-        outData:{
-          documentId:undefined,
-          schoolIds:[]
+        outData: {
+          documentId: undefined,
+          schoolIds: []
         },
-        openout:false,
+        openout: false,
         // 遮罩层
         loading: true,
         // 选中数组
@@ -245,8 +297,8 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {
-        }
+        rules: {},
+        fileList: []
       };
     },
     created() {
@@ -259,14 +311,42 @@
       }
     },
     methods: {
-      handleWithdraw(row){
+      // 文件上传中处理
+      handleFileUploadProgress(event, file, fileList) {
+        this.upload.isUploading = true;
+      },
+      // 文件上传成功处理
+      handleFileSuccess(response, file, fileList) {
+        this.upload.isUploading = false;
+        this.$refs.upload.clearFiles();
+        this.otdForm.odFiles.push(response)
+        this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+        let arr = [];
+        arr.push(file.id);
+        deleteFj(arr).then(res => {
+          if (res.code === 200) {
+            this.msgSuccess("删除成功");
+          }
+        })
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      beforeRemove(file, fileList) {
+        return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      handleWithdraw(row) {
+        this.checkedData = []
         this.$confirm('是否确认撤回该文件?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(() =>{
-          withdrawDocument(row.id).then(res=>{
-            if(res.code === 200){
+        }).then(() => {
+          withdrawDocument(row.id).then(res => {
+            if (res.code === 200) {
               this.msgSuccess("撤回成功")
               this.getList()
             }
@@ -280,32 +360,38 @@
       getCheckedNodes() {
         this.outData.schoolIds = []
         let arr = this.$refs.tree.getCheckedNodes(true)
-        arr.forEach(item=>{
+        arr.forEach(item => {
           this.outData.schoolIds.push(item.id)
         })
-        outSchools(this.outData).then(res=>{
-          if (res.code === 200) {
-            this.msgSuccess("发布成功")
-            this.openout = false
-            this.getList()
-          }
-        })
+        if (this.outData.schoolIds.length > 0) {
+          outSchools(this.outData).then(res => {
+            if (res.code === 200) {
+              this.msgSuccess("发布成功")
+              this.openout = false
+              this.getList()
+            }
+          })
+        } else {
+          this.msgError("未勾选任何学校！")
+        }
+
       },
-      handleOut(row){
+      handleOut(row) {
         this.openout = true
         this.outData.documentId = row.id
-        checkedSchools(row.id).then(res=>{
+        checkedSchools(row.id).then(res => {
           this.checkedData = res.data
         })
       },
-      getListDepts(){
-        listDepts().then(res=>{
+      getListDepts() {
+        listDepts().then(res => {
           this.schoolData = res.data
         })
       },
       /** 查询文件列表 */
       getList() {
         this.loading = true;
+
         listDocument(this.queryParams).then(response => {
           this.documentList = response.rows;
           this.total = response.total;
@@ -344,7 +430,7 @@
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.ids = selection.map(item => item.id)
-        this.single = selection.length!==1
+        this.single = selection.length !== 1
         this.multiple = !selection.length
       },
       /** 新增按钮操作 */
@@ -356,9 +442,20 @@
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.reset();
+        this.fileList = []
         const id = row.id || this.ids
         getDocument(id).then(response => {
-          this.form = response.data;
+          this.form = response.document;
+          let arr = response.files;
+          if (arr.length > 0) {
+            let urlData = {}
+            arr.forEach(item => {
+              urlData.name = item.originalName
+              urlData.id = item.id
+              urlData.url = item.path
+              this.fileList.push(urlData)
+            })
+          }
           this.open = true;
           this.title = "修改文件";
         });
@@ -394,12 +491,13 @@
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }).then(function () {
           return delDocument(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        }).catch(function() {});
+        }).catch(function () {
+        });
       },
       /** 导出按钮操作 */
       handleExport() {
@@ -408,12 +506,14 @@
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }).then(function () {
           return exportDocument(queryParams);
         }).then(response => {
           this.download(response.msg);
-        }).catch(function() {});
+        }).catch(function () {
+        });
       }
-    }
+    },
+
   };
 </script>

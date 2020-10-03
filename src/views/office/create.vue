@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item>
         <el-upload style="display: inline-block;margin-right: 10px;" ref="upload" :limit="1" :show-file-list="false" :headers="upload.headers" :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" >
-          <el-button type="success" icon="el-icon-plus">上传附件</el-button>
+          <el-button type="success" icon="el-icon-plus">{{uploadText}}</el-button>
         </el-upload>
         <el-button type="primary" @click="submitForm('otdForm')">立即创建</el-button>
         <el-button @click="resetForm('otdForm')">重置</el-button>
@@ -27,6 +27,7 @@
     components: {Tinymce},
     data() {
       return {
+        uploadText:'上传附件',
         upload: {
           // 是否禁用上传
           isUploading: false,
@@ -71,6 +72,7 @@
       },
       // 文件上传中处理
       handleFileUploadProgress(event, file, fileList) {
+        this.uploadText = '正在上传中...'
         this.upload.isUploading = true;
       },
       // 文件上传成功处理
@@ -79,6 +81,7 @@
         this.$refs.upload.clearFiles();
         this.otdForm.odFiles.push(response)
         this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+        this.uploadText='上传附件'
       },
       // 提交上传文件
       submitFileForm() {

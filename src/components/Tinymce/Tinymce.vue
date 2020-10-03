@@ -56,6 +56,7 @@
           menubar: false, // 禁用菜单栏
           branding: false, // 隐藏右下角技术支持
           elementpath: false, // 隐藏底栏的元素路径
+          paste_data_images: true,
           font_formats:
             "微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif",
           fontsize_formats:
@@ -64,7 +65,7 @@
           language: "zh_CN",
           skin_url: "/static/tinymce/skins/ui/oxide",
           content_css: "/static/tinymce/skins/content/content.css",
-          plugins:  ['advlist autolink autosave code codesample colorpicker colorpicker contextmenu directionality fullscreen hr image imagetools  insertdatetime link lists media nonbreaking preview searchreplace table template textcolor textpattern visualblocks visualchars wordcount'],
+          plugins:  ['advlist autolink autosave code codesample colorpicker colorpicker contextmenu directionality fullscreen hr image imagetools  insertdatetime link lists media nonbreaking paste preview searchreplace table template textcolor textpattern visualblocks visualchars wordcount'],
           toolbar: toolbar,
           menubar: this.menubar,
           contextmenu: false, // 禁用富文本的右键菜单，使用浏览器自带的右键菜单

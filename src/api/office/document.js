@@ -80,3 +80,18 @@ export function withdrawDocument(id) {
     method: 'post',
   })
 }
+
+// 查看详情
+export function checkDetail(id) {
+  return request({
+    url: `/document/document/school/${id}`,
+    method: 'get',
+  })
+}
+// 删除附件
+export function deleteFj(ids) {
+  return request({
+    url: `/document/document/file/${ids}`,
+    method: 'delete',
+  })
+}
