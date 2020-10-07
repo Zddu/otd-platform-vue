@@ -447,7 +447,7 @@ export default {
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {
-      this.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
+      this.$prompt('用户密码必须包含大小写字母，数字，特殊字符中的任意三种', "修改密码", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       })

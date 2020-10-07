@@ -15,11 +15,11 @@
       </el-form-item>
     </el-form>
     <div class="footer-fj">
-      <p style="font-size: 12px" v-for="item in odFiles">
+      <div style="font-size: 12px" v-for="item in odFiles">
         附件下载: [
         <el-button style="font-size: 12px" type="text" @click="downloadByUser(item.id)">{{item.originalName}}</el-button>
         ]
-      </p>
+      </div>
     </div>
   </div>
 </template>

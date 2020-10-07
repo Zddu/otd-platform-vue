@@ -19,23 +19,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="发布时间" prop="publishTime">
-        <el-date-picker clearable size="small" style="width: 200px"
-                        v-model="queryParams.publishTime"
-                        type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择发布时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="状态" prop="state">
-        <el-input
-          v-model="queryParams.state"
-          placeholder="请输入状态："
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>

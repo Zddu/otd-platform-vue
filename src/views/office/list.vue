@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form  :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="文件名称" prop="title">
         <el-input
           v-model="queryParams.title"
@@ -19,23 +19,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="发布时间" prop="publishTime">
-        <el-date-picker clearable size="small" style="width: 200px"
-                        v-model="queryParams.publishTime"
-                        type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择发布时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="状态" prop="state">
-        <el-input
-          v-model="queryParams.state"
-          placeholder="请输入状态："
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      <!--<el-form-item label="发布时间" prop="publishTime">-->
+        <!--<el-date-picker clearable size="small" style="width: 200px"-->
+                        <!--v-model="queryParams.publishTime"-->
+                        <!--type="datetime"-->
+                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                        <!--placeholder="选择发布时间">-->
+        <!--</el-date-picker>-->
+      <!--</el-form-item>-->
+
       <el-form-item>
         <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -73,16 +65,6 @@
           @click="handleDelete"
           v-hasPermi="['document:document:remove']"
         >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['document:document:export']"
-        >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -162,28 +144,30 @@
       @pagination="getList"
     />
     <!--    发布-->
-    <el-dialog title="发布" :visible.sync="openout" width="400px" append-to-body>
-      <el-form ref="formOut" label-width="80px">
-        <el-form-item label="搜索">
-          <el-input
-            size="small"
-            placeholder="输入学校名进行过滤"
-            v-model="filterText">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="发送学校">
-          <el-tree
-            ref="tree"
-            :data="schoolData"
-            :default-checked-keys="checkedData"
-            show-checkbox
-            default-expand-all
-            node-key="id"
-            :filter-node-method="filterNode"
-            :props="defaultProps">
-          </el-tree>
-        </el-form-item>
-      </el-form>
+    <el-dialog  title="发布" :visible.sync="openout" width="500px" append-to-body>
+      <div style="height: 300px; overflow: auto;">
+        <el-form  ref="formOut" label-width="80px">
+          <el-form-item label="搜索">
+            <el-input
+              size="small"
+              placeholder="输入学校名进行过滤"
+              v-model="filterText">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="发送学校">
+            <el-tree
+              ref="tree"
+              :data="schoolData"
+              :default-checked-keys="checkedData"
+              show-checkbox
+              default-expand-all
+              node-key="id"
+              :filter-node-method="filterNode"
+              :props="defaultProps">
+            </el-tree>
+          </el-form-item>
+        </el-form>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="getCheckedNodes">确 定</el-button>
         <el-button @click="openout = false">取 消</el-button>
@@ -328,8 +312,12 @@
         if (this.form.odFiles) {
           this.form.odFiles.splice(this.form.odFiles.findIndex(item => item.id === file.id), 1);
         }
-        console.log(this.form.odFiles);
-        arr.push(file.id);
+        if (!file.id) {
+          arr.push(-1);
+        }else {
+          arr.push(file.id);
+        }
+        console.log("hand",file.id);
         deleteFj(arr).then(res => {
           if (res.code === 200) {
             this.msgSuccess("删除成功");

@@ -40,10 +40,10 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6" :xs="24">
+      <el-col :span="12" :xs="24">
         <el-card>
           <div slot="header" class="clearfix">
-            <span>修改密码</span>
+            <span>修改密码(用户密码必须包含大小写字母，数字，特殊字符中的任意三种)</span>
           </div>
           <resetPwd :user="user" />
           <!--<el-tabs v-model="activeTab">-->
