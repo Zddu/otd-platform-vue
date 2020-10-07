@@ -1,31 +1,8 @@
 <template>
   <div class="dashboard-editor-container">
-
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
-
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+    <el-row style="padding:16px 16px 0;margin-bottom:32px;">
+      <span style="font-size: 35px">欢迎您 {{deptName}} 管理员!</span>
     </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <raddar-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
-    </el-row>
-
-    
   </div>
 </template>
 
@@ -35,6 +12,7 @@ import LineChart from './dashboard/LineChart'
 import RaddarChart from './dashboard/RaddarChart'
 import PieChart from './dashboard/PieChart'
 import BarChart from './dashboard/BarChart'
+import { getUserProfile } from "@/api/system/user";
 
 const lineChartData = {
   newVisitis: {
@@ -66,12 +44,24 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      lineChartData: lineChartData.newVisitis,
+      user: {},
+      deptName: ""
     }
+  },
+  mounted(){
+    this.getUser()
   },
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
+    },
+    getUser() {
+      getUserProfile().then(response => {
+        this.user = response.data;
+        this.deptName = response.data.dept.deptName
+        console.log(response);
+      });
     }
   }
 }
@@ -80,7 +70,6 @@ export default {
 <style lang="scss" scoped>
 .dashboard-editor-container {
   padding: 32px;
-  background-color: rgb(240, 242, 245);
   position: relative;
 
   .chart-wrapper {

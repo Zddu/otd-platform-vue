@@ -26,8 +26,8 @@ export default {
   },
   data() {
     return {
-      title: '事务管理系统',
-      logo: logoImg
+      title: '三河市教体系统公文传输平台',
+      logo: ''
     }
   }
 }

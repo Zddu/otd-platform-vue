@@ -317,14 +317,18 @@
       },
       // 文件上传成功处理
       handleFileSuccess(response, file, fileList) {
+        console.log(response);
+        this.form.odFiles.push(response)
         this.upload.isUploading = false;
-        this.$refs.upload.clearFiles();
-        this.otdForm.odFiles.push(response)
         this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
         let arr = [];
+        if (this.form.odFiles) {
+          this.form.odFiles.splice(this.form.odFiles.findIndex(item => item.id === file.id), 1);
+        }
+        console.log(this.form.odFiles);
         arr.push(file.id);
         deleteFj(arr).then(res => {
           if (res.code === 200) {
@@ -391,7 +395,6 @@
       /** 查询文件列表 */
       getList() {
         this.loading = true;
-
         listDocument(this.queryParams).then(response => {
           this.documentList = response.rows;
           this.total = response.total;
@@ -445,11 +448,12 @@
         this.fileList = []
         const id = row.id || this.ids
         getDocument(id).then(response => {
-          this.form = response.document;
-          let arr = response.files;
+          this.form = response.data;
+          let arr = response.data.odFiles;
+          console.log(arr);
           if (arr.length > 0) {
-            let urlData = {}
             arr.forEach(item => {
+              let urlData = {}
               urlData.name = item.originalName
               urlData.id = item.id
               urlData.url = item.path
@@ -462,6 +466,7 @@
       },
       /** 提交按钮 */
       submitForm() {
+        console.log(this.form);
         this.$refs["form"].validate(valid => {
           if (valid) {
             if (this.form.id != null) {

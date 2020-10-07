@@ -5,7 +5,7 @@
         <el-input style="width: 45%" v-model="otdForm.title"></el-input>
       </el-form-item>
       <el-form-item label="内容">
-        <Tinymce :height="320" v-model="otdForm.content"/>
+        <Editor :height="320" v-model="otdForm.content"/>
       </el-form-item>
       <el-form-item>
         <el-upload style="display: inline-block;margin-right: 10px;" ref="upload" :limit="1" :show-file-list="false" :headers="upload.headers" :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" >
@@ -22,9 +22,10 @@
   import {attachment} from '@/api/office/create'
   import Tinymce from "../../components/Tinymce/Tinymce";
   import { getToken } from "@/utils/auth";
+  import Editor from "../../components/Editor/index";
   export default {
     name: "create",
-    components: {Tinymce},
+    components: {Editor, Tinymce},
     data() {
       return {
         uploadText:'上传附件',

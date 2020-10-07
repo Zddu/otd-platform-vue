@@ -178,14 +178,19 @@
             listDocument(this.queryParams).then(response => {
               this.documentList = response.rows;
               first_size = response.rows.length;
-              if ((first_size !== second_size)&&(first_size > second_size)) {
-                this.aplayAudio()
-                this.$notify.info({
-                  title: '新文件',
-                  message: `来了一条新文件：【${ response.rows[0].title}】`,
-                  duration: 3000
-                });
-              }
+              this.documentList.forEach((item,index)=>{
+                if (item.isReceived === 0) {
+                  this.aplayAudio()
+                  this.$notify.info({
+                    title: '新文件',
+                    message: `来了一条新文件：【${ response.rows[index].title}】`,
+                    duration: 3000
+                  });
+                }
+              })
+              // if ((first_size !== second_size)&&(first_size > second_size)) {
+              //
+              // }
               second_size = response.rows.length;
             });
           }, 1)

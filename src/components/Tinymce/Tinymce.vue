@@ -75,7 +75,23 @@
       };
     },
     mounted() {
-      tinymce.init({});
+      tinymce.init({
+        paste_data_images: true, // 设置为“true”即允许粘贴图像，而将其设置为“false”则不允许粘贴图像。
+        images_upload_handler: function (blobInfo, success, failure) {
+          let formData = new FormData()
+          console.log(blobInfo.filename())
+          formData.append('img', blobInfo.blob())
+          self.$axios.post('http://127.0.0.1:8000/upload/', formData)
+            .then(response => {
+              console.log(response.data['url'])
+              if (response.data['code'] == 200) {
+                success(response.data['url'])
+              } else {
+                failure('上传失败！')
+              }
+            })
+        }
+      });
     },
     methods: {
 
