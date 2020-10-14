@@ -11,8 +11,7 @@ export function listDocument(query) {
 // 取消归档
 export function cancelCollected(ids) {
   return request({
-    url: '/document/receive/not-collected',
-    method: 'put',
-    data: ids
+    url: '/document/receive/not-collected/'+ids,
+    method: 'post',
   })
 }

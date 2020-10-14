@@ -50,7 +50,7 @@
     },
     methods: {
       downloadByUser(id) {
-        window.open(`${this.base_url}document/document/download?id=` + encodeURI(`${id}`))
+        window.open(`${this.base_url}/document/document/download?id=` + encodeURI(`${id}`))
       },
       getOtdForm() {
         checkDetail(this.id).then(res => {

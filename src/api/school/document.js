@@ -35,9 +35,8 @@ export function exportDocument(query) {
 //归档
 export function isCollected(ids) {
   return request({
-    url: `/document/receive/collected`,
-    method: 'put',
-    data:JSON.stringify(ids)
+    url: `/document/receive/collected/${ids}`,
+    method: 'post',
   })
 }
 
