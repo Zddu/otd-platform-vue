@@ -11,7 +11,7 @@
         {{otdForm.publishTime?otdForm.publishTime:""}}
       </el-form-item>
       <el-form-item label="内容">
-        <div style="line-height: 0;" v-html="otdForm.content"></div>
+        <div v-html="otdForm.content"></div>
       </el-form-item>
     </el-form>
     <div class="footer-fj">

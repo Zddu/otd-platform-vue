@@ -4,6 +4,9 @@
       <el-form-item label="标题" prop="title">
         <el-input style="width: 45%" v-model="otdForm.title"></el-input>
       </el-form-item>
+      <el-form-item label="文件编号" prop="fileCode">
+        <el-input style="width: 45%" v-model="otdForm.fileCode"></el-input>
+      </el-form-item>
       <el-form-item label="内容">
         <Editor :height="320" v-model="otdForm.content"/>
       </el-form-item>
@@ -41,6 +44,7 @@
         },
         otdForm: {
           title: '',
+          fileCode: '',
           content: '',
           odFiles: []
         },

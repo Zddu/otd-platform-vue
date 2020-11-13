@@ -10,6 +10,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="文件名称" prop="title">
+        <el-input
+          v-model="queryParams.fileCode"
+          placeholder="请输入文件名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="发布者" prop="publisher">
         <el-input
           v-model="queryParams.publisher"
@@ -83,6 +92,7 @@
         </template>
       </el-table-column>
       <el-table-column label="发布者" align="center" prop="publisher"/>
+      <el-table-column label="文件编号" align="center" prop="fileCode"/>
       <el-table-column label="创建时间" align="center" prop="publishTime" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
@@ -274,6 +284,7 @@
           pageNum: 1,
           pageSize: 10,
           title: null,
+          fileCode:null,
           publisher: null,
           publishTime: null,
           state: null

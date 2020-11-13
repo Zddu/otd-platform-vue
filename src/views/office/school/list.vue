@@ -10,6 +10,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="文件编号" prop="title">
+        <el-input
+          v-model="queryParams.fileCode"
+          placeholder="请输入文件编号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="发布者" prop="publisher">
         <el-input
           v-model="queryParams.publisher"
@@ -70,6 +79,7 @@
         </template>
       </el-table-column>
       <el-table-column label="发布者" align="center" prop="publisher" />
+      <el-table-column label="文件编号" align="center" prop="fileCode" />
       <el-table-column label="发布时间" align="center" prop="publishTime" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.publishTime }}</span>
@@ -142,6 +152,7 @@
         queryParams: {
           pageNum: 1,
           pageSize: 10,
+          fileCode:null,
           title: null,
           publisher: null,
           publishTime: null,
@@ -168,6 +179,7 @@
         this.myInterval = window.setInterval(() => {
           setTimeout(() => {
             listDocument(this.queryParams).then(response => {
+
               this.documentList = response.rows;
               first_size = response.rows.length;
               this.documentList.forEach((item,index)=>{
@@ -180,9 +192,6 @@
                   });
                 }
               })
-              // if ((first_size !== second_size)&&(first_size > second_size)) {
-              //
-              // }
               second_size = response.rows.length;
             });
           }, 1)
@@ -196,6 +205,7 @@
       getList() {
         this.loading = true;
         listDocument(this.queryParams).then(response => {
+          console.log(response.rows);
           this.documentList = response.rows;
           this.total = response.total;
           this.loading = false;
